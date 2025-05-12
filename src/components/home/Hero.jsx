@@ -4,9 +4,17 @@ import SplitText from "@/blocks/TextAnimations/SplitText/SplitText";
 
 function Hero(props) {
     return (
-        <div className="w-full min-h-screen flex flex-col items-center justify-center text-center">
+        <div 
+            className="w-full h-full flex flex-col items-center justify-center text-center opacity-50"
+            style={{
+                backgroundImage: "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/images/MainImage.jpeg')",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat"
+            }}
+        >
             <SplitText
-                text="Welcome to Art"
+                text="Welcome to Afgunseen"
                 className="text-6xl font-serif text-center"
                 delay={150}
                 animationFrom={{ opacity: 0, transform: 'translate3d(0,50px,0)' }}

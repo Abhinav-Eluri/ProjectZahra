@@ -185,13 +185,13 @@ class Media {
         uniform sampler2D tMap;
         uniform float uBorderRadius;
         varying vec2 vUv;
-        
+
         // Rounded box SDF for UV space
         float roundedBoxSDF(vec2 p, vec2 b, float r) {
           vec2 d = abs(p) - b;
           return length(max(d, vec2(0.0))) + min(max(d.x, d.y), 0.0) - r;
         }
-        
+
         void main() {
           vec2 ratio = vec2(
             min((uPlaneSizes.x / uPlaneSizes.y) / (uImageSizes.x / uImageSizes.y), 1.0),
@@ -202,13 +202,13 @@ class Media {
             vUv.y * ratio.y + (1.0 - ratio.y) * 0.5
           );
           vec4 color = texture2D(tMap, uv);
-          
+
           // Apply rounded corners (assumes vUv in [0,1])
           float d = roundedBoxSDF(vUv - 0.5, vec2(0.5 - uBorderRadius), uBorderRadius);
           if(d > 0.0) {
             discard;
           }
-          
+
           gl_FragColor = vec4(color.rgb, 1.0);
         }
       `,
@@ -241,14 +241,7 @@ class Media {
     this.plane.setParent(this.scene);
   }
   createTitle() {
-    this.title = new Title({
-      gl: this.gl,
-      plane: this.plane,
-      renderer: this.renderer,
-      text: this.text,
-      textColor: this.textColor,
-      fontFamily: this.font,
-    });
+    // Text display removed as per requirement
   }
   update(scroll, direction) {
     this.plane.position.x = this.x - scroll.current - this.extra;
@@ -413,7 +406,24 @@ class App {
         text: "Palm Trees",
       },
     ];
-    const galleryItems = items && items.length ? items : defaultItems;
+
+    // Use provided items if available and not empty, otherwise use default items
+    let galleryItems = items && items.length ? items : defaultItems;
+
+    // Ensure we have at least 6 items for a good circular effect
+    // If we have fewer than 6 items, duplicate them until we have at least 6
+    if (galleryItems.length < 6) {
+      const originalLength = galleryItems.length;
+      const duplicationsNeeded = Math.ceil(6 / originalLength) - 1;
+
+      for (let i = 0; i < duplicationsNeeded; i++) {
+        galleryItems = galleryItems.concat(
+          galleryItems.slice(0, originalLength).map(item => ({...item}))
+        );
+      }
+    }
+
+    // Duplicate the items to create a continuous loop effect
     this.mediasImages = galleryItems.concat(galleryItems);
     this.medias = this.mediasImages.map((data, index) => {
       return new Media({
@@ -449,7 +459,11 @@ class App {
     this.isDown = false;
     this.onCheck();
   }
-  onWheel() {
+  onWheel(e) {
+    // Prevent the event from propagating to parent elements
+    e.preventDefault();
+    e.stopPropagation();
+
     this.scroll.target += 2;
     this.onCheckDebounce();
   }
@@ -486,10 +500,17 @@ class App {
       this.scroll.ease,
     );
     const direction = this.scroll.current > this.scroll.last ? "right" : "left";
-    if (this.medias) {
+
+    // Check if medias exist and have length before updating
+    if (this.medias && this.medias.length > 0) {
       this.medias.forEach((media) => media.update(this.scroll, direction));
     }
-    this.renderer.render({ scene: this.scene, camera: this.camera });
+
+    // Only render if we have a valid scene and camera
+    if (this.scene && this.camera) {
+      this.renderer.render({ scene: this.scene, camera: this.camera });
+    }
+
     this.scroll.last = this.scroll.current;
     this.raf = window.requestAnimationFrame(this.update.bind(this));
   }
@@ -500,26 +521,30 @@ class App {
     this.boundOnTouchMove = this.onTouchMove.bind(this);
     this.boundOnTouchUp = this.onTouchUp.bind(this);
     window.addEventListener("resize", this.boundOnResize);
-    window.addEventListener("mousewheel", this.boundOnWheel);
-    window.addEventListener("wheel", this.boundOnWheel);
-    window.addEventListener("mousedown", this.boundOnTouchDown);
-    window.addEventListener("mousemove", this.boundOnTouchMove);
-    window.addEventListener("mouseup", this.boundOnTouchUp);
-    window.addEventListener("touchstart", this.boundOnTouchDown);
-    window.addEventListener("touchmove", this.boundOnTouchMove);
-    window.addEventListener("touchend", this.boundOnTouchUp);
+    // Only add wheel event listeners to the container, not the window
+    this.container.addEventListener("mousewheel", this.boundOnWheel);
+    this.container.addEventListener("wheel", this.boundOnWheel);
+    this.container.addEventListener("mousedown", this.boundOnTouchDown);
+    this.container.addEventListener("mousemove", this.boundOnTouchMove);
+    this.container.addEventListener("mouseup", this.boundOnTouchUp);
+    this.container.addEventListener("touchstart", this.boundOnTouchDown);
+    this.container.addEventListener("touchmove", this.boundOnTouchMove);
+    this.container.addEventListener("touchend", this.boundOnTouchUp);
   }
   destroy() {
     window.cancelAnimationFrame(this.raf);
     window.removeEventListener("resize", this.boundOnResize);
-    window.removeEventListener("mousewheel", this.boundOnWheel);
-    window.removeEventListener("wheel", this.boundOnWheel);
-    window.removeEventListener("mousedown", this.boundOnTouchDown);
-    window.removeEventListener("mousemove", this.boundOnTouchMove);
-    window.removeEventListener("mouseup", this.boundOnTouchUp);
-    window.removeEventListener("touchstart", this.boundOnTouchDown);
-    window.removeEventListener("touchmove", this.boundOnTouchMove);
-    window.removeEventListener("touchend", this.boundOnTouchUp);
+    // Remove event listeners from the container instead of the window
+    if (this.container) {
+      this.container.removeEventListener("mousewheel", this.boundOnWheel);
+      this.container.removeEventListener("wheel", this.boundOnWheel);
+      this.container.removeEventListener("mousedown", this.boundOnTouchDown);
+      this.container.removeEventListener("mousemove", this.boundOnTouchMove);
+      this.container.removeEventListener("mouseup", this.boundOnTouchUp);
+      this.container.removeEventListener("touchstart", this.boundOnTouchDown);
+      this.container.removeEventListener("touchmove", this.boundOnTouchMove);
+      this.container.removeEventListener("touchend", this.boundOnTouchUp);
+    }
     if (
       this.renderer &&
       this.renderer.gl &&
