@@ -19,7 +19,7 @@ function Gallery() {
                 const filesData = await fetchImages();
                 setImages(filesData);
             } catch (error) {
-                console.error("Failed to fetch images from Appwrite:", error);
+                console.error("Failed to fetch images:", error);
                 // Optionally: Set an error state here to show an error message in the UI
                 // setError("Could not load images. Please try again later.");
             } finally {

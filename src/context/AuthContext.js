@@ -1,45 +1,115 @@
 'use client';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { account } from '@/lib/appwrite';
+import { signIn, signOut, useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+    const { data: session, status } = useSession();
     const [loading, setLoading] = useState(true);
+    const router = useRouter();
 
-    const fetchUser = async () => {
+    useEffect(() => {
+        // Update loading state based on session status
+        setLoading(status === 'loading');
+    }, [status]);
+
+    const login = async (email, password) => {
         try {
-            const res = await account.get();
-            setUser(res);
-        } catch {
-            setUser(null);
-        } finally {
-            setLoading(false);
+            const result = await signIn('credentials', {
+                email,
+                password,
+                redirect: false,
+            });
+
+            if (result?.error) {
+                throw new Error(result.error);
+            }
+
+            return result;
+        } catch (error) {
+            console.error('Login error:', error);
+            throw error;
         }
     };
 
-    const login = async (email, password) => {
-        await account.createEmailPasswordSession(email, password);
-        await fetchUser();
+    const adminLogin = async (email, password) => {
+        try {
+            // First try the admin-specific endpoint
+            const response = await fetch('/api/admin/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Admin login failed');
+            }
+
+            // If admin login is successful, use NextAuth to create a session
+            const result = await signIn('credentials', {
+                email,
+                password,
+                redirect: false,
+            });
+
+            if (result?.error) {
+                throw new Error(result.error);
+            }
+
+            return { ...result, ...data };
+        } catch (error) {
+            console.error('Admin login error:', error);
+            throw error;
+        }
     };
 
     const register = async (email, password, name) => {
-        await account.create('unique()', email, password, name);
-        await login(email, password);
+        try {
+            // Call the signup API
+            const response = await fetch('/api/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password, name }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Registration failed');
+            }
+
+            // Automatically log in after successful registration
+            return login(email, password);
+        } catch (error) {
+            console.error('Registration error:', error);
+            throw error;
+        }
     };
 
     const logout = async () => {
-        await account.deleteSession('current');
-        setUser(null);
+        await signOut({ redirect: false });
+        router.push('/');
     };
 
-    useEffect(() => {
-        fetchUser();
-    }, []);
-
     return (
-        <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+        <AuthContext.Provider value={{ 
+            user: session?.user || null, 
+            login, 
+            adminLogin,
+            register, 
+            logout, 
+            loading,
+            isAuthenticated: !!session?.user,
+            isAdmin: !!session?.user?.isAdmin
+        }}>
             {children}
         </AuthContext.Provider>
     );

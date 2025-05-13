@@ -5,6 +5,7 @@ import { addToCart, removeFromCart } from '@/store/cartSlice';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
+import { loadStripe } from '@stripe/stripe-js';
 
 function CartPage() {
   const dispatch = useDispatch();
@@ -93,20 +94,12 @@ function CartPage() {
                 </svg>
                 Continue Shopping
               </Link>
-              <button 
+              <Link 
+                href={user ? "/checkout" : "/login?redirect=/cart"}
                 className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-md"
-                onClick={() => {
-                  if (!user) {
-                    // User is not logged in, redirect to login page with return URL
-                    router.push('/login?redirect=/cart');
-                  } else {
-                    // User is logged in, proceed with checkout
-                    alert('Checkout functionality would go here');
-                  }
-                }}
               >
                 Checkout
-              </button>
+              </Link>
             </div>
           </>
         )}

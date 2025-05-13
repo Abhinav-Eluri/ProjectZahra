@@ -58,8 +58,16 @@ const cartSlice = createSlice({
         saveCartState(state);
       }
     },
+    clearCart(state) {
+      // Reset the cart to initial state
+      state.items = [];
+      state.totalQuantity = 0;
+
+      // Save updated state to localStorage
+      saveCartState(state);
+    },
   },
 });
 
-export const { addToCart, removeFromCart } = cartSlice.actions;
+export const { addToCart, removeFromCart, clearCart } = cartSlice.actions;
 export default cartSlice.reducer;

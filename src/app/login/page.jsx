@@ -61,6 +61,11 @@ export default function LoginPage() {
                         Register
                     </Link>
                 </p>
+                <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-2">
+                    <Link href="/admin/login" className="text-blue-600 hover:underline">
+                        Admin Login
+                    </Link>
+                </p>
             </div>
         </div>
     );

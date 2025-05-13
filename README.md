@@ -20,6 +20,37 @@ You can start editing the page by modifying `app/page.jsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Data Storage
+
+This project uses local storage for authentication and mock data for the gallery.
+
+## Database with Prisma
+
+This project uses [Prisma](https://prisma.io/) as an ORM for database access. The project is configured to use SQLite for development, but you can easily switch to another database provider like PostgreSQL, MySQL, or MongoDB.
+
+### Prisma Setup
+
+1. The database schema is defined in `prisma/schema.prisma`
+2. To create your database and generate the Prisma client, run:
+
+```bash
+npx prisma migrate dev --name init
+```
+
+3. To explore your database with Prisma Studio, run:
+
+```bash
+npx prisma studio
+```
+
+4. To update the Prisma client after schema changes, run:
+
+```bash
+npx prisma generate
+```
+
+For more information, check out the [Prisma documentation](https://prisma.io/docs).
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

@@ -8,9 +8,10 @@ function Hero(props) {
             className="w-full h-full flex flex-col items-center justify-center text-center opacity-50"
             style={{
                 backgroundImage: "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/images/MainImage.jpeg')",
-                backgroundSize: "cover",
+                backgroundSize: "100% auto",
                 backgroundPosition: "center",
-                backgroundRepeat: "no-repeat"
+                backgroundRepeat: "no-repeat",
+                backgroundAttachment: "fixed"
             }}
         >
             <SplitText
