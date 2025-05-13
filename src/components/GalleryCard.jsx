@@ -7,6 +7,8 @@ function GalleryCard({ image, quantity = 0, onAddToCart, onRemoveFromCart }) {
     const [isClosing, setIsClosing] = useState(false);
     const modalRef = useRef(null);
 
+    console.log("Image:", image);
+
     const handleRightClick = (e) => {
         e.preventDefault();
     };
@@ -97,7 +99,10 @@ function GalleryCard({ image, quantity = 0, onAddToCart, onRemoveFromCart }) {
                 </div>
 
                 <div className="p-5">
-                    <div className="flex justify-end items-center mt-4">
+                    <div className="flex justify-between items-center mt-4">
+                        <span className="text-gray-800 dark:text-white font-semibold text-lg mr-4">
+                            {image.price ? `$${image.price.toFixed(2)}` : 'Free'}
+                        </span>
                         {quantity === 0 ? (
                             <button
                                 onClick={() => onAddToCart(image)}
