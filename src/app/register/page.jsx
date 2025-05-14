@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {useAuth} from "@/context/AuthContext";
 
@@ -8,7 +8,14 @@ export default function RegisterPage() {
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
-    const { register } = useAuth();
+    const { register, isAuthenticated } = useAuth();
+
+    // Redirect if user is already authenticated
+    useEffect(() => {
+        if (isAuthenticated) {
+            router.push('/');
+        }
+    }, [isAuthenticated, router]);
 
 
     async function handleRegister() {

@@ -1,3 +1,19 @@
+// Helper function to check if a string looks like a file name
+const isFileNameLike = (str) => {
+    if (!str) return false;
+
+    // Check if the string contains file extensions
+    if (/\.(jpg|jpeg|png|gif|webp|svg)$/i.test(str)) return true;
+
+    // Check if the string contains typical file name patterns (like UUIDs or timestamps)
+    if (/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/i.test(str)) return true;
+
+    // Check if the string has no spaces (typical for file names)
+    if (!/\s/.test(str) && str.length > 10) return true;
+
+    return false;
+};
+
 // Fallback mock data in case API fails
 const mockImages = [
     {
@@ -33,7 +49,7 @@ export const fetchImages = async () => {
             return data.images.filter(img => img.visible).map(img => ({
                 id: img.id,
                 src: img.filePath || `https://via.placeholder.com/400x300?text=${img.file_id}`,
-                alt: img.description || 'Gallery Image',
+                alt: isFileNameLike(img.description) ? 'Gallery Image' : (img.description || 'Gallery Image'),
                 price: img.price
             }));
         }

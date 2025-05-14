@@ -24,6 +24,65 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 This project uses local storage for authentication and mock data for the gallery.
 
+## Stripe Integration
+
+This project uses [Stripe](https://stripe.com) for payment processing. The integration includes:
+
+1. Checkout API endpoint (`/api/checkout/route.js`) for creating Stripe checkout sessions
+2. Webhook handler (`/api/webhook/route.js`) for processing Stripe events
+
+### Stripe Setup
+
+1. Create a Stripe account and get your API keys from the [Stripe Dashboard](https://dashboard.stripe.com/apikeys)
+2. Add your API keys to `.env.local`:
+   ```
+   NEXT_STRIPE_SECRET_KEY=sk_test_your_secret_key
+   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_your_publishable_key
+   ```
+
+### Webhook Setup
+
+Stripe webhooks are essential for reliable payment processing. They allow Stripe to notify your application when events occur, such as successful payments or failed charges.
+
+1. Set up a webhook endpoint in the [Stripe Dashboard](https://dashboard.stripe.com/webhooks):
+   - For production: `https://your-domain.com/api/webhook`
+   - For development: Use the [Stripe CLI](https://stripe.com/docs/stripe-cli) to forward events to your local server:
+     ```bash
+     stripe listen --forward-to localhost:3000/api/webhook
+     ```
+
+2. Add the webhook secret to `.env.local`:
+   ```
+   STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
+   ```
+
+For more information, check out the [Stripe Documentation](https://stripe.com/docs).
+
+## Email Notifications
+
+This project uses [Nodemailer](https://nodemailer.com/) to send email notifications to users. Currently, the system sends order confirmation emails when a purchase is completed.
+
+### Email Setup
+
+1. Configure your email settings in `.env.local`:
+   ```
+   EMAIL_HOST=smtp.gmail.com
+   EMAIL_PORT=587
+   EMAIL_SECURE=false
+   EMAIL_USER=your-email@gmail.com
+   EMAIL_PASS=your-app-password
+   ```
+
+2. For Gmail, you need to use an App Password instead of your regular password:
+   - Go to your Google Account > Security
+   - Under "Signing in to Google", select "2-Step Verification"
+   - At the bottom of the page, select "App passwords"
+   - Select "Mail" as the app and "Other" as the device
+   - Enter a name (e.g., "Project Zahra")
+   - Click "Generate" and use the generated password
+
+A sample configuration file is available at `.env.local.example`.
+
 ## Database with Prisma
 
 This project uses [Prisma](https://prisma.io/) as an ORM for database access. The project is configured to use SQLite for development, but you can easily switch to another database provider like PostgreSQL, MySQL, or MongoDB.

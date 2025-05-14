@@ -39,7 +39,7 @@ export default function CheckoutPage() {
         },
         body: JSON.stringify({ 
           cartItems,
-          userId: user.$id // Pass the user ID to the server
+          userId: user.id // Pass the user ID to the server
         }),
       });
 
@@ -104,7 +104,7 @@ export default function CheckoutPage() {
                   </div>
                 </div>
                 <div className="text-gray-700 dark:text-gray-300">
-                  $100.00
+                  ${item.price ? item.price.toFixed(2) : '0.00'}
                 </div>
               </div>
             ))}
@@ -113,7 +113,7 @@ export default function CheckoutPage() {
           <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
             <div className="flex justify-between items-center text-lg font-semibold">
               <span className="text-gray-800 dark:text-white">Total:</span>
-              <span className="text-gray-800 dark:text-white">${cartItems.length * 100}.00</span>
+              <span className="text-gray-800 dark:text-white">${cartItems.reduce((total, item) => total + (item.price || 0), 0).toFixed(2)}</span>
             </div>
           </div>
         </div>

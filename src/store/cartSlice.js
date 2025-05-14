@@ -37,6 +37,7 @@ const cartSlice = createSlice({
           id: newItem.id,
           src: newItem.src,
           alt: newItem.alt,
+          price: newItem.price || 0, // Store the price, default to 0 if not provided
           quantity: 1, // Always set quantity to 1
         });
         state.totalQuantity++;

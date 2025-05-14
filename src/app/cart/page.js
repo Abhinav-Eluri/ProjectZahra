@@ -66,10 +66,11 @@ function CartPage() {
                     />
                   </div>
                   <div className="p-4 flex-1 flex flex-col justify-between">
-                    <div>
+                    <div className="flex-1 flex flex-row justify-between">
                       <h3 className="text-lg font-medium text-gray-800 dark:text-white mb-2">
                         {item.alt}
                       </h3>
+                      <h2>Price: {item.price} </h2>
                     </div>
                     <div className="flex items-center mt-4">
                       <button

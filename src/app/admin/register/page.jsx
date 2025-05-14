@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useAuth } from '@/context/AuthContext';
 
 export default function AdminRegisterPage() {
   const [email, setEmail] = useState('');
@@ -12,6 +13,20 @@ export default function AdminRegisterPage() {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { isAuthenticated, isAdmin } = useAuth();
+
+  // Redirect if user is already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      if (isAdmin) {
+        // If already authenticated as admin, redirect to admin dashboard
+        router.push('/admin/dashboard');
+      } else {
+        // If authenticated as regular user, redirect to home
+        router.push('/');
+      }
+    }
+  }, [isAuthenticated, isAdmin, router]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,12 +50,12 @@ export default function AdminRegisterPage() {
       }
 
       setSuccess(data.message || 'Admin user created successfully');
-      
+
       // Clear form
       setEmail('');
       setPassword('');
       setName('');
-      
+
       // Redirect to admin login after a short delay
       setTimeout(() => {
         router.push('/admin/login');
@@ -65,19 +80,19 @@ export default function AdminRegisterPage() {
             </span>
           </p>
         </div>
-        
+
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
             <span className="block sm:inline">{error}</span>
           </div>
         )}
-        
+
         {success && (
           <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
             <span className="block sm:inline">{success}</span>
           </div>
         )}
-        
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4 rounded-md shadow-sm">
             <div>
@@ -138,7 +153,7 @@ export default function AdminRegisterPage() {
               {loading ? 'Creating...' : 'Create Admin Account'}
             </button>
           </div>
-          
+
           <div className="text-center">
             <Link href="/admin/login" className="font-medium text-indigo-600 hover:text-indigo-500">
               Already have an admin account? Sign in
