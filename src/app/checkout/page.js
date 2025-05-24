@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { loadStripe } from '@stripe/stripe-js';
 import Link from 'next/link';
+import Image from "next/image";
 
 export default function CheckoutPage() {
   const cartItems = useSelector((state) => state.cart.items);
@@ -92,7 +93,7 @@ export default function CheckoutPage() {
                 className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-4"
               >
                 <div className="flex items-center">
-                  <img 
+                  <Image
                     src={item.src} 
                     alt={item.alt} 
                     className="w-16 h-16 object-cover rounded-md mr-4"

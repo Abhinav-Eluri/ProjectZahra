@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Image from "next/image";
 
 function Author() {
   const [isVisible, setIsVisible] = useState(false);
@@ -77,7 +78,7 @@ function Author() {
                 <div className="group relative">
                   <div className="relative overflow-hidden rounded-2xl shadow-xl transform transition-all duration-500 hover:scale-105">
                     <div className="aspect-[3/4] bg-gradient-to-br from-purple-200 to-purple-300 dark:from-purple-800 dark:to-purple-900 flex items-center justify-center">
-                      <img src="/images/photographers/second_image.jpg" alt="Zahra Abbasi" className="w-full h-full object-cover" />
+                      <Image src="/images/photographers/second_image.jpg" alt="Zahra Abbasi" className="w-full h-full object-cover" />
 
                     </div>
                     <div className="absolute inset-0 bg-gradient-to-t from-purple-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -92,7 +93,7 @@ function Author() {
                 <div className="group relative">
                   <div className="relative overflow-hidden rounded-2xl shadow-xl transform transition-all duration-500 hover:scale-105">
                     <div className="aspect-[3/4] bg-gradient-to-br from-pink-200 to-indigo-300 dark:from-pink-800 dark:to-indigo-900 flex items-center justify-center">
-                      <img src="/images/photographers/together.jpg" alt="Zahra and Manizha Abbasi together" className="w-full h-full object-cover" />
+                      <Image src="/images/photographers/together.jpg" alt="Zahra and Manizha Abbasi together" className="w-full h-full object-cover" />
                     </div>
                     <div className="absolute inset-0 bg-gradient-to-t from-pink-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     <div className="absolute bottom-0 left-0 right-0 p-6 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-500">
@@ -106,7 +107,7 @@ function Author() {
                 <div className="group relative">
                   <div className="relative overflow-hidden rounded-2xl shadow-xl transform transition-all duration-500 hover:scale-105">
                     <div className="aspect-[3/4] bg-gradient-to-br from-indigo-200 to-indigo-300 dark:from-indigo-800 dark:to-indigo-900 flex items-center justify-center">
-                      <img src="/images/photographers/first_image.jpg" alt="Manizha Abbasi" className="w-full h-full object-cover" />
+                      <Image src="/images/photographers/first_image.jpg" alt="Manizha Abbasi" className="w-full h-full object-cover" />
                     </div>
                     <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     <div className="absolute bottom-0 left-0 right-0 p-6 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-500">

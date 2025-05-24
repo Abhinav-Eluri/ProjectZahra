@@ -9,6 +9,7 @@ import {
   useAnimation,
   useTransform,
 } from "framer-motion";
+import Image from "next/image";
 
 const IMGS = [
   "https://images.unsplash.com/photo-1528181304800-259b08848526?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -155,7 +156,7 @@ const RollingGallery = ({
                 }deg) translateZ(${radius}px)`,
               }}
             >
-              <img
+              <Image
                 src={url}
                 alt="gallery"
                 className="pointer-events-none h-[120px] w-[300px] rounded-[15px] border-[3px] border-white object-cover

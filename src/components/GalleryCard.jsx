@@ -1,5 +1,6 @@
 // components/GalleryCard.jsx
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import Image from "next/image";
 
 function GalleryCard({ image, quantity = 0, onAddToCart, onRemoveFromCart }) {
     const [imageLoading, setImageLoading] = useState(true);
@@ -71,7 +72,7 @@ function GalleryCard({ image, quantity = 0, onAddToCart, onRemoveFromCart }) {
                             <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                         </div>
                     )}
-                    <img
+                    <Image
                         src={image.src}
                         alt={image.alt}
                         className={`w-full h-64 object-cover transition-transform duration-500 hover:scale-105 ${imageLoading ? 'opacity-0' : 'opacity-100'} cursor-pointer`}
@@ -141,7 +142,7 @@ function GalleryCard({ image, quantity = 0, onAddToCart, onRemoveFromCart }) {
                             </button>
                         </div>
                         <div className="h-full overflow-auto">
-                            <img 
+                            <Image
                                 src={image.src} 
                                 alt={image.alt} 
                                 className="w-full h-auto object-contain"

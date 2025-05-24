@@ -5,14 +5,14 @@ import { addToCart, removeFromCart } from '@/store/cartSlice';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
-import { loadStripe } from '@stripe/stripe-js';
+
+import Image from "next/image";
 
 function CartPage() {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.items);
-  const totalQuantity = useSelector((state) => state.cart.totalQuantity);
+
   const { user } = useAuth();
-  const router = useRouter();
 
   const handleAddToCart = (item) => {
     dispatch(addToCart(item));
@@ -59,7 +59,7 @@ function CartPage() {
                   className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden flex flex-col sm:flex-row"
                 >
                   <div className="w-full sm:w-1/3">
-                    <img 
+                    <Image
                       src={item.src} 
                       alt={item.alt} 
                       className="w-full h-48 object-cover"

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function OrdersPage() {
   const router = useRouter();
@@ -80,7 +81,7 @@ export default function OrdersPage() {
         {orders.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-gray-600 dark:text-gray-400 text-xl mb-6">
-              You haven't placed any orders yet
+              You haven&apost placed any orders yet
             </div>
             <Link 
               href="/gallery" 
@@ -126,7 +127,7 @@ export default function OrdersPage() {
                         <div key={item.id} className="flex items-center justify-between">
                           <div className="flex items-center">
                             {item.imageUrl && (
-                              <img 
+                              <Image
                                 src={item.imageUrl} 
                                 alt={item.name} 
                                 className="w-12 h-12 object-cover rounded-md mr-3"
