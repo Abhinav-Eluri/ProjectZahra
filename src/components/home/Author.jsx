@@ -73,7 +73,7 @@ function Author() {
 
               {/* Artists Grid */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
-                {/* Zahra's Portrait */}
+                {/* Zahras Portrait */}
                 <div className="group relative">
                   <div className="relative overflow-hidden rounded-2xl shadow-xl transform transition-all duration-500 hover:scale-105">
                     <div className="aspect-[3/4] bg-gradient-to-br from-purple-200 to-purple-300 dark:from-purple-800 dark:to-purple-900 flex items-center justify-center">
@@ -102,7 +102,7 @@ function Author() {
                   </div>
                 </div>
 
-                {/* Manizha's Portrait */}
+                {/* Manizhas Portrait */}
                 <div className="group relative">
                   <div className="relative overflow-hidden rounded-2xl shadow-xl transform transition-all duration-500 hover:scale-105">
                     <div className="aspect-[3/4] bg-gradient-to-br from-indigo-200 to-indigo-300 dark:from-indigo-800 dark:to-indigo-900 flex items-center justify-center">
@@ -314,7 +314,7 @@ function Author() {
                 {[
                   {
                     title: "PILnet Pro Bono Award",
-                    description: "Short film \"Ali's Story\" was shortlisted for this prestigious award.",
+                    description: "Short film 'Ali&apos;s Story' was shortlisted for this prestigious award.",
                     icon: "⭐",
                     gradient: "from-yellow-400 to-orange-500"
                   },
@@ -370,7 +370,7 @@ function Author() {
                     Experience Their Art
                   </h2>
                   <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-                    Discover more of Zahra and Manizha's powerful visual narratives and join their mission to amplify unheard voices.
+                    Discover more of Zahra and Manizha&apos;s powerful visual narratives and join their mission to amplify unheard voices.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <button className="px-8 py-4 bg-white text-purple-600 font-semibold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 hover:bg-gray-50">
