@@ -4,7 +4,6 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
 import { clearCart } from '@/store/cartSlice';
 import Link from 'next/link';
-import { PrismaClient } from '@/generated/prisma';
 
 export default function CheckoutSuccessPage() {
   const searchParams = useSearchParams();
@@ -45,7 +44,7 @@ export default function CheckoutSuccessPage() {
         }
 
         setOrderDetails(data.order);
-        
+
         // Clear the cart after successful payment
         dispatch(clearCart());
       } catch (error) {
