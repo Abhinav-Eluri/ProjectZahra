@@ -5,6 +5,9 @@ import { useDispatch } from 'react-redux';
 import { clearCart } from '@/store/cartSlice';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+
 export default function CheckoutSuccessPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
