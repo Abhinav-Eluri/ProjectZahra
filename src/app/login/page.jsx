@@ -63,7 +63,7 @@ export default function LoginPage() {
                     </button>
                 </form>
                 <p className="text-center text-sm text-gray-500 dark:text-gray-400">
-                    Don't have an account?{' '}
+                    Don&apos;t have an account?{' '}
                     <Link href="/register" className="text-green-600 hover:underline">
                         Register
                     </Link>
