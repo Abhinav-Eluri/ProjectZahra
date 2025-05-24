@@ -73,6 +73,7 @@ function GalleryCard({ image, quantity = 0, onAddToCart, onRemoveFromCart }) {
                         </div>
                     )}
                     <Image
+                        fill
                         src={image.src}
                         alt={image.alt}
                         className={`w-full h-64 object-cover transition-transform duration-500 hover:scale-105 ${imageLoading ? 'opacity-0' : 'opacity-100'} cursor-pointer`}
@@ -143,6 +144,7 @@ function GalleryCard({ image, quantity = 0, onAddToCart, onRemoveFromCart }) {
                         </div>
                         <div className="h-full overflow-auto">
                             <Image
+                                fill
                                 src={image.src} 
                                 alt={image.alt} 
                                 className="w-full h-auto object-contain"

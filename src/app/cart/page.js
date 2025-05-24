@@ -65,6 +65,7 @@ function CartPage() {
                       src={item.src} 
                       alt={item.alt} 
                       className="w-full h-48 object-cover"
+                      fill
                     />
                   </div>
                   <div className="p-4 flex-1 flex flex-col justify-between">

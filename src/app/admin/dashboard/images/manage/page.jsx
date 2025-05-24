@@ -190,7 +190,7 @@ export default function ManageImagesPage() {
                                 >
                                   {/* Image (smaller) */}
                                   <div className="relative h-16 w-16 flex-shrink-0">
-                                    <Image src={image.filePath} alt={image.description || 'Gallery image'} fill style={{ objectFit: 'cover' }} className="rounded" />
+                                    <Image  src={image.filePath} alt={image.description || 'Gallery image'} fill style={{ objectFit: 'cover' }} className="rounded" />
                                   </div>
 
                                   {/* File ID */}

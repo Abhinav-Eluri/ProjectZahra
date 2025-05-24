@@ -97,6 +97,7 @@ export default function CheckoutPage() {
               >
                 <div className="flex items-center">
                   <Image
+                      fill
                     src={item.src} 
                     alt={item.alt} 
                     className="w-16 h-16 object-cover rounded-md mr-4"

@@ -131,6 +131,7 @@ export default function OrdersPage() {
                           <div className="flex items-center">
                             {item.imageUrl && (
                               <Image
+                                  fill
                                 src={item.imageUrl} 
                                 alt={item.name} 
                                 className="w-12 h-12 object-cover rounded-md mr-3"
