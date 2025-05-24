@@ -7,6 +7,9 @@ import { loadStripe } from '@stripe/stripe-js';
 import Link from 'next/link';
 import Image from "next/image";
 
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+
 export default function CheckoutPage() {
   const cartItems = useSelector((state) => state.cart.items);
   const router = useRouter();

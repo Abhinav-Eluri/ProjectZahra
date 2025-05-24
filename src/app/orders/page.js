@@ -5,6 +5,9 @@ import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 import Image from 'next/image';
 
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+
 export default function OrdersPage() {
   const router = useRouter();
   const { user } = useAuth();

@@ -5,8 +5,10 @@ import { addToCart, removeFromCart } from '@/store/cartSlice';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
-
 import Image from "next/image";
+
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
 
 function CartPage() {
   const dispatch = useDispatch();

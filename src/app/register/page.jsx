@@ -3,6 +3,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {useAuth} from "@/context/AuthContext";
 
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+
 export default function RegisterPage() {
     const router = useRouter();
     const [email, setEmail] = useState('');
