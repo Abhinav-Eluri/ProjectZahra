@@ -407,8 +407,14 @@ class App {
       },
     ];
 
-    // Use provided items if available and not empty, otherwise use default items
-    let galleryItems = items && items.length ? items : defaultItems;
+    // If no items are provided, don't show anything
+    if (!items || !items.length) {
+      this.mediasImages = [];
+      this.medias = [];
+      return;
+    }
+
+    let galleryItems = items;
 
     // Ensure we have at least 6 items for a good circular effect
     // If we have fewer than 6 items, duplicate them until we have at least 6
@@ -504,11 +510,11 @@ class App {
     // Check if medias exist and have length before updating
     if (this.medias && this.medias.length > 0) {
       this.medias.forEach((media) => media.update(this.scroll, direction));
-    }
 
-    // Only render if we have a valid scene and camera
-    if (this.scene && this.camera) {
-      this.renderer.render({ scene: this.scene, camera: this.camera });
+      // Only render if we have a valid scene and camera and medias to display
+      if (this.scene && this.camera) {
+        this.renderer.render({ scene: this.scene, camera: this.camera });
+      }
     }
 
     this.scroll.last = this.scroll.current;

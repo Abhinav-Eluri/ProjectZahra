@@ -3,11 +3,19 @@ const nextConfig = {
   output: 'standalone',
   images: {
     unoptimized: true,
-    // Remove domains, use remotePatterns instead if needed
+    // Remote patterns for external image domains
     remotePatterns: [
       {
         protocol: 'https',
         hostname: '*.onrender.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'via.placeholder.com',
       },
     ],
   },

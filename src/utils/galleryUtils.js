@@ -20,16 +20,22 @@ const mockImages = [
         id: 'img1',
         src: 'https://via.placeholder.com/400x300?text=Image+1',
         alt: 'Gallery Image 1',
+        price: 19.99,
+        imageType: 'photo',
     },
     {
         id: 'img2',
         src: 'https://via.placeholder.com/400x300?text=Image+2',
         alt: 'Gallery Image 2',
+        price: 29.99,
+        imageType: 'painting',
     },
     {
         id: 'img3',
         src: 'https://via.placeholder.com/400x300?text=Image+3',
         alt: 'Gallery Image 3',
+        price: 24.99,
+        imageType: 'photo',
     },
 ];
 
@@ -50,15 +56,16 @@ export const fetchImages = async () => {
                 id: img.id,
                 src: img.filePath || `https://via.placeholder.com/400x300?text=${img.file_id}`,
                 alt: isFileNameLike(img.description) ? 'Gallery Image' : (img.description || 'Gallery Image'),
-                price: img.price
+                price: img.price,
+                imageType: img.imageType || 'photo' // Include imageType with a default value
             }));
         }
 
-        // Fallback to mock data if no images are returned
-        return mockImages;
+        // Return empty array if no images are returned
+        return [];
     } catch (error) {
         console.error("Failed to fetch images:", error);
-        // Fallback to mock data in case of error
-        return mockImages;
+        // Return empty array in case of error
+        return [];
     }
 };

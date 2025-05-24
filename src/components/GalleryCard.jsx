@@ -66,7 +66,7 @@ function GalleryCard({ image, quantity = 0, onAddToCart, onRemoveFromCart }) {
     return (
         <>
             <div className="bg-white dark:bg-gray-800 overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-200 dark:border-gray-700">
-                <div className="relative">
+                <div className="relative h-64 w-full">
                     {imageLoading && (
                         <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-700">
                             <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
@@ -76,7 +76,7 @@ function GalleryCard({ image, quantity = 0, onAddToCart, onRemoveFromCart }) {
                         fill
                         src={image.src}
                         alt={image.alt}
-                        className={`w-full h-64 object-cover transition-transform duration-500 hover:scale-105 ${imageLoading ? 'opacity-0' : 'opacity-100'} cursor-pointer`}
+                        className={`object-cover transition-transform duration-500 hover:scale-105 ${imageLoading ? 'opacity-0' : 'opacity-100'} cursor-pointer`}
                         onLoad={() => setImageLoading(false)}
                         onError={() => setImageLoading(false)}
                         onContextMenu={handleRightClick}
@@ -142,12 +142,12 @@ function GalleryCard({ image, quantity = 0, onAddToCart, onRemoveFromCart }) {
                                 </svg>
                             </button>
                         </div>
-                        <div className="h-full overflow-auto">
+                        <div className="relative h-[60vh] w-full overflow-auto">
                             <Image
                                 fill
                                 src={image.src} 
                                 alt={image.alt} 
-                                className="w-full h-auto object-contain"
+                                className="object-contain"
                                 onContextMenu={handleRightClick}
                             />
                         </div>

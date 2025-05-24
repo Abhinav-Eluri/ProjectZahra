@@ -83,6 +83,25 @@ This project uses [Nodemailer](https://nodemailer.com/) to send email notificati
 
 A sample configuration file is available at `.env.local.example`.
 
+## Cloudinary Integration
+
+This project uses [Cloudinary](https://cloudinary.com/) for image storage and management. Images uploaded through the admin dashboard are stored in Cloudinary instead of the local filesystem.
+
+### Cloudinary Setup
+
+1. Create a Cloudinary account at [https://cloudinary.com/](https://cloudinary.com/)
+2. Get your account details from the Cloudinary Dashboard
+3. Add your Cloudinary credentials to `.env.local`:
+   ```
+   CLOUDINARY_CLOUD_NAME=your_cloud_name
+   CLOUDINARY_API_KEY=your_api_key
+   CLOUDINARY_API_SECRET=your_api_secret
+   ```
+
+> **Important Note**: For `CLOUDINARY_CLOUD_NAME`, use only the cloud name part (e.g., `dvqtxsfta`), not the full Cloudinary URL. If you're copying from the Cloudinary dashboard, make sure to extract just the cloud name from the URL (the part after the `@` symbol in `cloudinary://api_key:api_secret@cloud_name`).
+
+The application will automatically upload images to your Cloudinary account and use the provided URLs for displaying images.
+
 ## Database with Prisma
 
 This project uses [Prisma](https://prisma.io/) as an ORM for database access. The project is configured to use SQLite for development, but you can easily switch to another database provider like PostgreSQL, MySQL, or MongoDB.

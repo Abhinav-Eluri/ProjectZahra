@@ -2,10 +2,8 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { prisma } from '@/lib/prisma';
-import { writeFile, unlink } from 'fs/promises';
-import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
-import { mkdir } from 'fs/promises';
+import { uploadImageToCloudinary, deleteImageFromCloudinary, getPublicIdFromUrl } from '@/utils/cloudinary';
 
 // Helper function to check if user is admin
 async function isUserAdmin(session) {
@@ -52,30 +50,19 @@ export async function POST(request) {
       return NextResponse.json({ error: 'File must be an image' }, { status: 400 });
     }
 
-    // Create uploads directory if it doesn't exist
-    const uploadsDir = path.join(process.cwd(), 'public/uploads/images');
-    try {
-      await mkdir(uploadsDir, { recursive: true });
-    } catch (err) {
-      if (err.code !== 'EEXIST') {
-        throw err;
-      }
-    }
-
-    // Generate a unique filename that includes the image name
-    const fileExtension = file.name.split('.').pop();
-    // Sanitize the image name to make it safe for filenames
-    const sanitizedImageName = imageName.replace(/[^a-zA-Z0-9_-]/g, '_');
-    const uniqueFilename = `${sanitizedImageName}-${uuidv4()}.${fileExtension}`;
-    const filePath = path.join(uploadsDir, uniqueFilename);
-
-    // Convert the file to an ArrayBuffer and save it
+    // Convert the file to an ArrayBuffer
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    await writeFile(filePath, buffer);
 
-    // Store the relative path for web access
-    const webPath = `/uploads/images/${uniqueFilename}`;
+    // Upload to Cloudinary
+    const cloudinaryResult = await uploadImageToCloudinary(buffer, file.name, {
+      folder: 'projectzahra/uploads',
+      public_id: `${imageName.replace(/[^a-zA-Z0-9_-]/g, '_')}-${uuidv4()}`,
+      resource_type: 'image'
+    });
+
+    // Store the Cloudinary URL for web access
+    const webPath = cloudinaryResult.secure_url;
 
     // Create new image in database
     const image = await prisma.image.create({
@@ -239,16 +226,18 @@ export async function DELETE(request) {
       return NextResponse.json({ error: 'Image not found' }, { status: 404 });
     }
 
-    // Delete the physical file from the filesystem
-    if (image.filePath) {
+    // Delete the image from Cloudinary
+    if (image.filePath && image.filePath.includes('cloudinary.com')) {
       try {
-        // Convert web path to filesystem path
-        const filePath = path.join(process.cwd(), 'public', image.filePath);
-        await unlink(filePath);
-        console.log(`Successfully deleted file: ${filePath}`);
+        // Extract the public_id from the Cloudinary URL
+        const publicId = getPublicIdFromUrl(image.filePath);
+        if (publicId) {
+          await deleteImageFromCloudinary(publicId);
+          console.log(`Successfully deleted image from Cloudinary: ${publicId}`);
+        }
       } catch (fileError) {
-        console.error('Error deleting image file:', fileError);
-        // Continue with database deletion even if file deletion fails
+        console.error('Error deleting image from Cloudinary:', fileError);
+        // Continue with database deletion even if Cloudinary deletion fails
       }
     }
 

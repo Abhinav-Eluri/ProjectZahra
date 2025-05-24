@@ -59,10 +59,10 @@ function GalleryPreview() {
                             <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mb-4"></div>
                             <p className="text-xl text-gray-300">Loading gallery...</p>
                         </div>
-                    ) : (
+                    ) : images.length > 0 ? (
                         <>
                             <CircularGallery 
-                                items={images.length > 0 ? images : undefined} 
+                                items={images} 
                                 bend={3} 
                                 textColor="#ffffff" 
                                 borderRadius={0.05} 
@@ -76,6 +76,18 @@ function GalleryPreview() {
                                 </Link>
                             </div>
                         </>
+                    ) : (
+                        <div className="flex flex-col items-center justify-center h-full">
+                            <p className="text-xl text-gray-300">No images available</p>
+                            <div className="mt-8">
+                                <Link 
+                                    href="/gallery" 
+                                    className="px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transform transition duration-300 hover:scale-105"
+                                >
+                                    View Full Gallery
+                                </Link>
+                            </div>
+                        </div>
                     )}
                 </div>
             </div>
