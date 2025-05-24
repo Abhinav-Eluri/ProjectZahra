@@ -19,7 +19,8 @@ export default function ManageImagesPage() {
     description: '',
     price: 0,
     visible: true,
-    priority: 0
+    priority: 0,
+    imageType: 'photo' // Default to 'photo'
   });
 
   useEffect(() => {

@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from "@/context/AuthContext";
 import Link from 'next/link';
@@ -9,8 +9,15 @@ export default function LoginPage() {
     const searchParams = useSearchParams();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const {login} = useAuth();
+    const { login, isAuthenticated } = useAuth();
     const redirectPath = searchParams.get('redirect');
+
+    // Redirect if user is already authenticated
+    useEffect(() => {
+        if (isAuthenticated) {
+            router.push(redirectPath || '/');
+        }
+    }, [isAuthenticated, router, redirectPath]);
     const handleLogin = async () => {
         try {
             await login(email, password);

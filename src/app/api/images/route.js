@@ -20,6 +20,7 @@ export async function GET(request) {
         price: true,
         visible: true,
         priority: true,
+        imageType: true, // Include image type
         createdAt: true,
         updatedAt: true
       }

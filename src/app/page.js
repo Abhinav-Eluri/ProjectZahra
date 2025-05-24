@@ -7,20 +7,26 @@ import GalleryPreview from "@/components/home/GalleryPreview";
 
 export default function Home() {
     return (
-        <div className="w-full min-h-screen overflow-y-hidden overflow-x-hidden snap-y snap-mandatory">
-            <div className="snap-start h-screen">
+        <div className="w-full min-h-screen">
+            {/* Hero Section - Full Screen */}
+            <section className="h-screen snap-start">
                 <Hero/>
-            </div>
+            </section>
 
-            <div className="snap-start h-screen">
+            {/* Gallery Preview Section - Full Screen */}
+            <section className="h-screen snap-start">
                 <GalleryPreview/>
-            </div>
-            <div className="snap-start h-screen">
+            </section>
+
+            {/* Author Section - Dynamic Height */}
+            <section className="min-h-screen snap-start">
                 <Author/>
-            </div>
-            <div className="snap-start">
+            </section>
+
+            {/* Footer Section - Auto Height */}
+            <section className="snap-start">
                 <Footer/>
-            </div>
+            </section>
         </div>
     );
 }

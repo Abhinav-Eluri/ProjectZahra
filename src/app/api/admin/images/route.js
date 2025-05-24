@@ -37,11 +37,13 @@ export async function POST(request) {
     const formData = await request.formData();
     const file = formData.get('file');
     const file_id = formData.get('file_id');
+    const imageName = formData.get('imageName');
     const description = formData.get('description');
     const price = formData.get('price');
+    const imageType = formData.get('imageType') || 'photo'; // Get image type with default
 
     // Validate required fields
-    if (!file || !file_id || price === undefined) {
+    if (!file || !file_id || !imageName || price === undefined) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
@@ -60,9 +62,11 @@ export async function POST(request) {
       }
     }
 
-    // Generate a unique filename
+    // Generate a unique filename that includes the image name
     const fileExtension = file.name.split('.').pop();
-    const uniqueFilename = `${uuidv4()}.${fileExtension}`;
+    // Sanitize the image name to make it safe for filenames
+    const sanitizedImageName = imageName.replace(/[^a-zA-Z0-9_-]/g, '_');
+    const uniqueFilename = `${sanitizedImageName}-${uuidv4()}.${fileExtension}`;
     const filePath = path.join(uploadsDir, uniqueFilename);
 
     // Convert the file to an ArrayBuffer and save it
@@ -78,8 +82,9 @@ export async function POST(request) {
       data: {
         file_id,
         filePath: webPath,
-        description,
+        description: imageName + (description ? ` - ${description}` : ''), // Include image name in description
         price: parseFloat(price),
+        imageType, // Add the image type
         visible: true,
         priority: 0,
         userId: session.user.id
@@ -147,7 +152,7 @@ export async function PATCH(request) {
 
     // Parse request body
     const data = await request.json();
-    const { id, priority, visible, description, price, file_id } = data;
+    const { id, priority, visible, description, imageName, price, file_id, imageType } = data;
 
     // Validate required fields
     if (!id) {
@@ -158,7 +163,35 @@ export async function PATCH(request) {
     const updateData = {};
     if (priority !== undefined) updateData.priority = priority;
     if (visible !== undefined) updateData.visible = visible;
-    if (description !== undefined) updateData.description = description;
+    if (imageType !== undefined) updateData.imageType = imageType; // Add image type update
+
+    // Handle description and imageName
+    if (imageName !== undefined && description !== undefined) {
+      updateData.description = imageName + (description ? ` - ${description}` : '');
+    } else if (imageName !== undefined) {
+      // Get the current image to extract the description part if it exists
+      const currentImage = await prisma.image.findUnique({
+        where: { id },
+        select: { description: true }
+      });
+
+      const currentDesc = currentImage?.description || '';
+      const descPart = currentDesc.includes(' - ') ? currentDesc.split(' - ').slice(1).join(' - ') : '';
+
+      updateData.description = imageName + (descPart ? ` - ${descPart}` : '');
+    } else if (description !== undefined) {
+      // Get the current image to extract the name part
+      const currentImage = await prisma.image.findUnique({
+        where: { id },
+        select: { description: true }
+      });
+
+      const currentDesc = currentImage?.description || '';
+      const namePart = currentDesc.includes(' - ') ? currentDesc.split(' - ')[0] : currentDesc;
+
+      updateData.description = namePart + (description ? ` - ${description}` : '');
+    }
+
     if (price !== undefined) updateData.price = parseFloat(price);
     if (file_id !== undefined) updateData.file_id = file_id;
 

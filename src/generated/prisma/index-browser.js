@@ -148,6 +148,18 @@ exports.Prisma.OrderScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.OrderItemScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  itemId: 'itemId',
+  name: 'name',
+  price: 'price',
+  imageUrl: 'imageUrl',
+  quantity: 'quantity',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.ImageScalarFieldEnum = {
   id: 'id',
   file_id: 'file_id',
@@ -156,6 +168,7 @@ exports.Prisma.ImageScalarFieldEnum = {
   price: 'price',
   visible: 'visible',
   priority: 'priority',
+  imageType: 'imageType',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   userId: 'userId'
@@ -204,6 +217,7 @@ exports.Prisma.ModelName = {
   User: 'User',
   Product: 'Product',
   Order: 'Order',
+  OrderItem: 'OrderItem',
   Image: 'Image',
   Account: 'Account',
   Session: 'Session',

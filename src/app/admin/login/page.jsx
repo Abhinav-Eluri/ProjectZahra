@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -10,8 +10,21 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { adminLogin } = useAuth();
+  const { adminLogin, isAuthenticated, isAdmin } = useAuth();
   const router = useRouter();
+
+  // Redirect if user is already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      if (isAdmin) {
+        // If already authenticated as admin, redirect to admin dashboard
+        router.push('/admin/dashboard');
+      } else {
+        // If authenticated as regular user, redirect to home
+        router.push('/');
+      }
+    }
+  }, [isAuthenticated, isAdmin, router]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,7 +33,7 @@ export default function AdminLoginPage() {
 
     try {
       const result = await adminLogin(email, password);
-      
+
       if (result.redirectUrl) {
         router.push(result.redirectUrl);
       } else {
@@ -47,13 +60,13 @@ export default function AdminLoginPage() {
             </Link>
           </p>
         </div>
-        
+
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
             <span className="block sm:inline">{error}</span>
           </div>
         )}
-        
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="-space-y-px rounded-md shadow-sm">
             <div>

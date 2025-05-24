@@ -1,51 +1,70 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
+import React, { useEffect, useState } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
-import { useAuth } from '@/context/AuthContext';
 import { clearCart } from '@/store/cartSlice';
+import Link from 'next/link';
+import { PrismaClient } from '@/generated/prisma';
 
 export default function CheckoutSuccessPage() {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [session, setSession] = useState(null);
-  const router = useRouter();
   const searchParams = useSearchParams();
-  const sessionId = searchParams.get('session_id');
+  const router = useRouter();
   const dispatch = useDispatch();
-  const { user } = useAuth();
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [orderDetails, setOrderDetails] = useState(null);
 
   useEffect(() => {
-    if (!user) {
-      router.push('/login');
+    const sessionId = searchParams.get('session_id');
+    const orderId = searchParams.get('order_id');
+
+    if (!sessionId || !orderId) {
+      setError('Invalid checkout session');
+      setIsLoading(false);
       return;
     }
 
-    if (!sessionId) {
-      setError('No session ID found');
-      setLoading(false);
-      return;
+    async function verifyPayment() {
+      try {
+        // Call API to verify payment and update order status
+        const response = await fetch('/api/verify-payment', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            sessionId,
+            orderId
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to verify payment');
+        }
+
+        setOrderDetails(data.order);
+        
+        // Clear the cart after successful payment
+        dispatch(clearCart());
+      } catch (error) {
+        console.error('Payment verification error:', error);
+        setError('An error occurred while verifying your payment. Please contact support.');
+      } finally {
+        setIsLoading(false);
+      }
     }
 
-    // Clear the cart after successful checkout
-    dispatch(clearCart());
+    verifyPayment();
+  }, [searchParams, dispatch]);
 
-    // In a real application, you would verify the session with Stripe
-    // and update your database with order information
-    setLoading(false);
-    setSession({
-      id: sessionId,
-      status: 'complete',
-    });
-  }, [sessionId, dispatch, router, user]);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-gray-700 dark:text-gray-300">Processing your order...</p>
+          <p className="mt-4 text-gray-700 dark:text-gray-300">Processing your payment...</p>
         </div>
       </div>
     );
@@ -54,15 +73,18 @@ export default function CheckoutSuccessPage() {
   if (error) {
     return (
       <div className="min-h-screen bg-white dark:bg-gray-900 px-4 py-10">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl font-bold text-red-500 mb-4">Error</h1>
-          <p className="text-gray-700 dark:text-gray-300 mb-6">{error}</p>
-          <Link 
-            href="/cart" 
-            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-md inline-block"
-          >
-            Return to Cart
-          </Link>
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+            {error}
+          </div>
+          <div className="flex justify-center">
+            <Link 
+              href="/cart" 
+              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-md"
+            >
+              Return to Cart
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -70,57 +92,58 @@ export default function CheckoutSuccessPage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 px-4 py-10">
-      <div className="max-w-4xl mx-auto text-center">
-        <div className="mb-8">
-          <svg 
-            className="w-20 h-20 text-green-500 mx-auto" 
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24" 
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              strokeWidth="2" 
-              d="M5 13l4 4L19 7"
-            ></path>
-          </svg>
-        </div>
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6">
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">
+              Payment Successful!
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400">
+              Thank you for your purchase. Your order has been confirmed.
+            </p>
+          </div>
 
-        <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-4">
-          Thank You for Your Order!
-        </h1>
+          {orderDetails && (
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+                Order Details
+              </h2>
+              <div className="space-y-2">
+                <p className="text-gray-700 dark:text-gray-300">
+                  <span className="font-medium">Order ID:</span> {orderDetails.id}
+                </p>
+                <p className="text-gray-700 dark:text-gray-300">
+                  <span className="font-medium">Date:</span> {new Date(orderDetails.createdAt).toLocaleString()}
+                </p>
+                <p className="text-gray-700 dark:text-gray-300">
+                  <span className="font-medium">Total:</span> €{orderDetails.total.toFixed(2)}
+                </p>
+                <p className="text-gray-700 dark:text-gray-300">
+                  <span className="font-medium">Status:</span> {orderDetails.status}
+                </p>
+              </div>
+            </div>
+          )}
 
-        <p className="text-gray-700 dark:text-gray-300 mb-6">
-          Your order has been successfully processed. You will receive a confirmation email shortly.
-        </p>
-
-        <div className="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg mb-8">
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
-            Order Details
-          </h2>
-          <p className="text-gray-700 dark:text-gray-300">
-            Order ID: {session?.id}
-          </p>
-          <p className="text-gray-700 dark:text-gray-300">
-            Status: {session?.status}
-          </p>
-        </div>
-
-        <div className="flex flex-col sm:flex-row justify-center gap-4">
-          <Link 
-            href="/gallery" 
-            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-md"
-          >
-            Continue Shopping
-          </Link>
-          <Link 
-            href="/" 
-            className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-3 rounded-md"
-          >
-            Return to Home
-          </Link>
+          <div className="flex justify-between items-center mt-8">
+            <Link 
+              href="/gallery" 
+              className="text-blue-500 hover:text-blue-600 flex items-center"
+            >
+              Continue Shopping
+            </Link>
+            <Link 
+              href="/orders" 
+              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-md"
+            >
+              View My Orders
+            </Link>
+          </div>
         </div>
       </div>
     </div>

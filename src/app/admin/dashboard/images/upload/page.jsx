@@ -11,8 +11,10 @@ export default function ImageUploadPage() {
 
   const [file, setFile] = useState(null);
   const [fileId, setFileId] = useState('');
+  const [imageName, setImageName] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
+  const [imageType, setImageType] = useState('photo'); // New state for image type
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -49,6 +51,11 @@ export default function ImageUploadPage() {
       return;
     }
 
+    if (!imageName) {
+      setError('Please enter an image name');
+      return;
+    }
+
     if (!price || isNaN(parseFloat(price)) || parseFloat(price) <= 0) {
       setError('Please enter a valid price');
       return;
@@ -62,8 +69,10 @@ export default function ImageUploadPage() {
       const formData = new FormData();
       formData.append('file', file);
       formData.append('file_id', fileId);
+      formData.append('imageName', imageName);
       formData.append('description', description);
       formData.append('price', price);
+      formData.append('imageType', imageType);
 
       // Upload the file and create the image record in the database
       const response = await fetch('/api/admin/images', {
@@ -82,8 +91,10 @@ export default function ImageUploadPage() {
       // Reset form
       setFile(null);
       setFileId('');
+      setImageName('');
       setDescription('');
       setPrice('');
+      setImageType('photo');
 
       // Clear success message after 3 seconds
       setTimeout(() => {
@@ -146,6 +157,22 @@ export default function ImageUploadPage() {
                 </div>
 
                 <div>
+                  <label htmlFor="imageName" className="block text-sm font-medium text-gray-700">
+                    Image Name
+                  </label>
+                  <input
+                    type="text"
+                    id="imageName"
+                    value={imageName}
+                    onChange={(e) => setImageName(e.target.value)}
+                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+                    placeholder="Enter image name"
+                    disabled={isUploading}
+                    required
+                  />
+                </div>
+
+                <div>
                   <label htmlFor="price" className="block text-sm font-medium text-gray-700">
                     Price
                   </label>
@@ -161,6 +188,22 @@ export default function ImageUploadPage() {
                     disabled={isUploading}
                     required
                   />
+                </div>
+
+                <div>
+                  <label htmlFor="imageType" className="block text-sm font-medium text-gray-700">
+                    Image Type
+                  </label>
+                  <select
+                    id="imageType"
+                    value={imageType}
+                    onChange={(e) => setImageType(e.target.value)}
+                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+                    disabled={isUploading}
+                  >
+                    <option value="photo">Photo</option>
+                    <option value="painting">Painting</option>
+                  </select>
                 </div>
 
                 <div>
