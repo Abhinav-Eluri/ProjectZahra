@@ -259,11 +259,8 @@ function Author() {
                   <div className="relative overflow-hidden rounded-2xl shadow-xl transform transition-all duration-500 hover:scale-105">
                     {/* Main image with gradient overlay */}
                     <div className="relative aspect-square bg-gradient-to-br from-purple-200 to-indigo-300 dark:from-purple-800 dark:to-indigo-900 flex items-center justify-center">
-                      {/* Replace this div with: <img src="/path/to/artists-working.jpg" alt="Zahra and Manizha Abbasi at work" className="w-full h-full object-cover" /> */}
-                      <div className="text-center text-purple-600 dark:text-purple-300">
-                        <div className="text-8xl mb-4">🎨</div>
-                        <p className="text-lg font-medium">Add Artists at Work Photo</p>
-                      </div>
+                      <img src="/images/artistAtWork.jpeg" alt="Zahra at work" className="w-full h-full object-cover" />
+
                       {/* Subtle gradient overlay */}
                       <div className="absolute inset-0 bg-gradient-to-t from-purple-900/30 via-transparent to-indigo-900/20 opacity-70 group-hover:opacity-40 transition-opacity duration-500"></div>
                     </div>
