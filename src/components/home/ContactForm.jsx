@@ -92,10 +92,10 @@ export default function ContactForm() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 flex items-center justify-center p-5">
-            <div className="flex max-w-5xl w-full bg-white rounded-2xl overflow-hidden shadow-xl">
+        <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center p-5">
+            <div className="flex max-w-5xl w-full bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-xl">
                 {/* Left Section - Purple */}
-                <div className="bg-purple-600 text-white p-16 w-2/5 flex flex-col justify-between min-h-[600px]">
+                <div className="bg-purple-600 dark:bg-purple-800 text-white p-16 w-2/5 flex flex-col justify-between min-h-[600px]">
                     <div>
                         <h1 className="text-4xl font-bold mb-8">Get in Touch</h1>
                         <p className="text-lg mb-12 leading-relaxed">
@@ -126,12 +126,12 @@ export default function ContactForm() {
                 </div>
 
                 {/* Right Section - Form */}
-                <div className="bg-white p-16 w-3/5 min-h-[600px]">
-                    <h2 className="text-2xl font-bold text-black mb-8">Send a Message</h2>
+                <div className="bg-white dark:bg-gray-800 p-16 w-3/5 min-h-[600px]">
+                    <h2 className="text-2xl font-bold text-black dark:text-white mb-8">Send a Message</h2>
 
                     <div className="space-y-6">
                         <div>
-                            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                            <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Name
                             </label>
                             <input
@@ -141,7 +141,7 @@ export default function ContactForm() {
                                 value={formData.name}
                                 onChange={handleChange}
                                 placeholder="Your name"
-                                className={`w-full px-4 py-3 border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all bg-white`}
+                                className={`w-full px-4 py-3 border ${errors.name ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all bg-white dark:bg-gray-700 dark:text-white`}
                             />
                             {errors.name && (
                                 <p className="mt-1 text-sm text-red-600">{errors.name}</p>
@@ -149,7 +149,7 @@ export default function ContactForm() {
                         </div>
 
                         <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Email
                             </label>
                             <input
@@ -159,7 +159,7 @@ export default function ContactForm() {
                                 value={formData.email}
                                 onChange={handleChange}
                                 placeholder="Your email address"
-                                className={`w-full px-4 py-3 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all bg-white`}
+                                className={`w-full px-4 py-3 border ${errors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all bg-white dark:bg-gray-700 dark:text-white`}
                             />
                             {errors.email && (
                                 <p className="mt-1 text-sm text-red-600">{errors.email}</p>
@@ -167,7 +167,7 @@ export default function ContactForm() {
                         </div>
 
                         <div>
-                            <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                            <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Message
                             </label>
                             <textarea
@@ -177,7 +177,7 @@ export default function ContactForm() {
                                 onChange={handleChange}
                                 placeholder="Your message"
                                 rows={5}
-                                className={`w-full px-4 py-3 border ${errors.message ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all resize-none bg-white`}
+                                className={`w-full px-4 py-3 border ${errors.message ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all resize-none bg-white dark:bg-gray-700 dark:text-white`}
                             />
                             {errors.message && (
                                 <p className="mt-1 text-sm text-red-600">{errors.message}</p>
@@ -185,7 +185,7 @@ export default function ContactForm() {
                         </div>
 
                         {submitStatus && (
-                            <div className={`p-3 rounded-lg ${submitStatus.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                            <div className={`p-3 rounded-lg ${submitStatus.type === 'success' ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300' : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300'}`}>
                                 {submitStatus.message}
                             </div>
                         )}
@@ -193,7 +193,7 @@ export default function ContactForm() {
                         <button
                             onClick={handleSubmit}
                             disabled={isSubmitting}
-                            className={`w-full bg-purple-600 text-white py-4 px-6 rounded-lg font-semibold text-lg transition-colors duration-200 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 outline-none ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-purple-700'}`}
+                            className={`w-full bg-purple-600 dark:bg-purple-700 text-white py-4 px-6 rounded-lg font-semibold text-lg transition-colors duration-200 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 outline-none ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-purple-700 dark:hover:bg-purple-800'}`}
                         >
                             {isSubmitting ? 'Sending...' : 'Send Message'}
                         </button>

@@ -1,24 +1,31 @@
-'use client';
+"use client";
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, X, Sun, Moon, ChevronDown, User, ShoppingBag, LogOut } from 'lucide-react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useAuth } from '@/context/AuthContext';
-import { useSelector } from 'react-redux';
-import { useTheme } from '@/context/ThemeContext';
+import { Menu, X, Sun, Moon, ChevronDown, User, ShoppingBag, LogOut, Search } from 'lucide-react';
+import {useAuth} from "@/context/AuthContext";
+import {useTheme} from "@/context/ThemeContext";
+import {useSelector} from "react-redux";
 
 export default function NavBar() {
     const [isOpen, setIsOpen] = useState(false);
     const [mounted, setMounted] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
-    const pathname = usePathname();
+    const [scrolled, setScrolled] = useState(false);
+    const dropdownRef = useRef(null);
     const { user, logout, loading: authLoading } = useAuth();
     const { isDarkMode, toggleTheme } = useTheme();
     const cartItems = useSelector((state) => state.cart.items);
     const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
-    const dropdownRef = useRef(null);
 
-    useEffect(() => setMounted(true), []);
+    useEffect(() => {
+        setMounted(true);
+
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 20);
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -31,197 +38,246 @@ export default function NavBar() {
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [dropdownRef]);
-    const isActive = (href) => pathname === href;
-
-    if (mounted && authLoading) return null;
 
     const navLinks = [
         { label: 'Home', href: '/' },
         { label: 'Gallery', href: '/gallery' },
+        { label: 'Artists', href: '/artists' },
+        { label: 'Exhibitions', href: '/exhibitions' },
+        { label: 'About', href: '/about' },
     ];
 
+
     return (
-        <nav className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white sticky top-0 z-50 shadow-sm transition-colors">
-            <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-                {/* Logo */}
-                <Link href="/" className="text-xl font-extrabold tracking-tight hover:opacity-90">
-                    AFGUNSEEN
-                </Link>
+        <>
+            <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+                scrolled
+                    ? 'bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md shadow-lg border-b border-zinc-200/20 dark:border-zinc-700/20'
+                    : 'bg-transparent'
+            }`}>
+                <div className="max-w-7xl mx-auto px-6 lg:px-8">
+                    <div className="flex items-center justify-between h-20">
+                        {/* Logo */}
+                        <div className="flex-shrink-0">
+                            <a href="/" className="group flex items-center space-x-2">
+                                <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-xl flex items-center justify-center transform group-hover:scale-105 transition-transform duration-200">
+                                    <span className="text-white font-bold text-lg">A</span>
+                                </div>
+                                <span className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                                    AFGUNSEEN
+                                </span>
+                            </a>
+                        </div>
 
-                {/* Desktop Links */}
-                <div className="hidden md:flex items-center gap-6 font-medium text-[17px]">
-                    {navLinks.map(({ label, href }) => (
-                        <Link
-                            key={href}
-                            href={href}
-                            className={`transition-colors hover:text-sky-500 ${
-                                isActive(href) ? 'text-sky-600 font-semibold' : ''
-                            }`}
-                        >
-                            {label}
-                        </Link>
-                    ))}
+                        {/* Desktop Navigation */}
+                        <div className="hidden lg:flex items-center space-x-1">
+                            {navLinks.map(({ label, href }) => (
+                                <a
+                                    key={href}
+                                    href={href}
+                                    className="relative px-4 py-2 text-gray-700 dark:text-gray-200 hover:text-purple-600 dark:hover:text-purple-400 font-medium transition-colors duration-200 group"
+                                >
+                                    {label}
+                                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-600 to-indigo-600 group-hover:w-full transition-all duration-300"></span>
+                                </a>
+                            ))}
+                        </div>
 
-                    <button
-                        onClick={toggleTheme}
-                        className="rounded-full p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"
-                        aria-label="Toggle Theme"
-                    >
-                        {mounted && (isDarkMode ? <Sun size={20} /> : <Moon size={20} />)}
-                    </button>
-
-                    <Link href="/cart" className="relative flex items-center hover:text-sky-500 transition">
-                        <svg className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M17 17a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 114 0 2 2 0 01-4 0z" />
-                        </svg>
-                        {mounted && cartItemCount > 0 && (
-                            <span className="absolute -top-2 -right-2 bg-sky-500 text-white rounded-full px-1.5 py-0.5 text-xs shadow-md animate-pulse">
-                                {cartItemCount}
-                            </span>
-                        )}
-                    </Link>
-
-                    {!user ? (
-                        <>
-                            <Link href="/login" className="text-sky-600 hover:underline">Login</Link>
-                            <Link href="/register" className="text-green-600 hover:underline">Register</Link>
-                        </>
-                    ) : (
-                        <div className="relative" ref={dropdownRef}>
-                            <button 
-                                onClick={() => setDropdownOpen(!dropdownOpen)}
-                                className="flex items-center gap-1 text-sky-600 hover:text-sky-700 transition"
-                            >
-                                {user.email?.split('@')[0] || 'Account'}
-                                <ChevronDown size={16} className={`transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
+                        {/* Desktop Actions */}
+                        <div className="hidden lg:flex items-center space-x-4">
+                            {/* Search */}
+                            <button className="p-2 text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full transition-colors duration-200">
+                                <Search size={20} />
                             </button>
 
-                            {dropdownOpen && (
-                                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-zinc-800 rounded-md shadow-lg py-1 z-50 border border-zinc-200 dark:border-zinc-700">
-                                    <Link 
-                                        href="/profile" 
-                                        className="flex items-center gap-2 px-4 py-2 text-sm text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-700"
-                                        onClick={() => setDropdownOpen(false)}
+                            {/* Theme Toggle */}
+                            <button
+                                onClick={toggleTheme}
+                                className="p-2 text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full transition-colors duration-200"
+                            >
+                                {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+                            </button>
+
+                            {/* Cart */}
+                            <button className="relative p-2 text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full transition-colors duration-200">
+                                <ShoppingBag size={20} />
+                                {cartItemCount > 0 && (
+                                    <span className="absolute -top-1 -right-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium shadow-lg">
+                                        {cartItemCount}
+                                    </span>
+                                )}
+                            </button>
+
+                            {/* User Menu */}
+                            {!user ? (
+                                <div className="flex items-center space-x-3">
+                                    <a href="/login" className="text-gray-700 dark:text-gray-200 hover:text-purple-600 dark:hover:text-purple-400 font-medium transition-colors duration-200">
+                                        Login
+                                    </a>
+                                    <a href="/register" className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-2 rounded-full hover:shadow-lg transform hover:scale-105 transition-all duration-200 font-medium">
+                                        Sign Up
+                                    </a>
+                                </div>
+                            ) : (
+                                <div className="relative" ref={dropdownRef}>
+                                    <button
+                                        onClick={() => setDropdownOpen(!dropdownOpen)}
+                                        className="flex items-center space-x-2 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors duration-200"
                                     >
-                                        <User size={16} />
-                                        Change user info
-                                    </Link>
-                                    <Link 
-                                        href="/orders" 
-                                        className="flex items-center gap-2 px-4 py-2 text-sm text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-700"
-                                        onClick={() => setDropdownOpen(false)}
-                                    >
-                                        <ShoppingBag size={16} />
-                                        View orders
-                                    </Link>
-                                    <button 
-                                        onClick={() => { logout(); setDropdownOpen(false); }} 
-                                        className="flex items-center gap-2 px-4 py-2 text-sm text-red-500 hover:bg-zinc-100 dark:hover:bg-zinc-700 w-full text-left"
-                                    >
-                                        <LogOut size={16} />
-                                        Logout
+                                        <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-full flex items-center justify-center">
+                                            <span className="text-white text-sm font-medium">
+                                                {user.email?.charAt(0).toUpperCase()}
+                                            </span>
+                                        </div>
+                                        <ChevronDown size={16} className={`text-gray-600 dark:text-gray-300 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
                                     </button>
+
+                                    {dropdownOpen && (
+                                        <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-zinc-800 rounded-2xl shadow-xl py-2 z-50 border border-gray-200 dark:border-zinc-700">
+                                            <div className="px-4 py-3 border-b border-gray-200 dark:border-zinc-700">
+                                                <p className="text-sm font-medium text-gray-900 dark:text-white">
+                                                    {user.email?.split('@')[0]}
+                                                </p>
+                                                <p className="text-xs text-gray-500 dark:text-gray-400">
+                                                    {user.email}
+                                                </p>
+                                            </div>
+                                            <a
+                                                href="/profile"
+                                                className="flex items-center space-x-3 px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-700 transition-colors duration-200"
+                                                onClick={() => setDropdownOpen(false)}
+                                            >
+                                                <User size={16} />
+                                                <span>Profile Settings</span>
+                                            </a>
+                                            <a
+                                                href="/orders"
+                                                className="flex items-center space-x-3 px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-700 transition-colors duration-200"
+                                                onClick={() => setDropdownOpen(false)}
+                                            >
+                                                <ShoppingBag size={16} />
+                                                <span>My Orders</span>
+                                            </a>
+                                            <div className="border-t border-gray-200 dark:border-zinc-700 mt-2 pt-2">
+                                                <button
+                                                    onClick={() => { logout(); setDropdownOpen(false); }}
+                                                    className="flex items-center space-x-3 px-4 py-3 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 w-full text-left transition-colors duration-200"
+                                                >
+                                                    <LogOut size={16} />
+                                                    <span>Sign Out</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>
-                    )}
-                </div>
 
-                {/* Mobile */}
-                <div className="md:hidden flex items-center gap-4">
+                        {/* Mobile Menu Button */}
+                        <div className="lg:hidden flex items-center space-x-3">
+                            <button className="relative p-2 text-gray-600 dark:text-gray-300">
+                                <ShoppingBag size={20} />
+                                {cartItemCount > 0 && (
+                                    <span className="absolute -top-1 -right-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
+                                        {cartItemCount}
+                                    </span>
+                                )}
+                            </button>
+                            <button
+                                onClick={() => setIsOpen(true)}
+                                className="p-2 text-gray-600 dark:text-gray-300 hover:text-purple-600 rounded-lg"
+                            >
+                                <Menu size={24} />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            {/* Mobile Slide-out Menu */}
+            <div className={`fixed inset-y-0 right-0 z-50 w-80 bg-white dark:bg-zinc-900 shadow-2xl transform transition-transform duration-300 ease-out ${
+                isOpen ? 'translate-x-0' : 'translate-x-full'
+            } lg:hidden`}>
+                <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-zinc-700">
+                    <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                        Menu
+                    </span>
                     <button
-                        onClick={toggleTheme}
-                        className="rounded-full p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800"
-                        aria-label="Toggle Theme"
+                        onClick={() => setIsOpen(false)}
+                        className="p-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 rounded-lg"
                     >
-                        {mounted && (isDarkMode ? <Sun size={20} /> : <Moon size={20} />)}
-                    </button>
-                    <Link href="/cart" className="relative">
-                        <svg className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M17 17a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 114 0 2 2 0 01-4 0z" />
-                        </svg>
-                        {mounted && cartItemCount > 0 && (
-                            <span className="absolute -top-2 -right-2 bg-sky-500 text-white rounded-full px-1.5 py-0.5 text-xs shadow-md">
-                                {cartItemCount}
-                            </span>
-                        )}
-                    </Link>
-                    <button onClick={() => setIsOpen(true)} aria-label="Open menu">
-                        <Menu size={28} />
-                    </button>
-                </div>
-            </div>
-
-            {/* Side Drawer */}
-            <div
-                className={`fixed top-0 right-0 h-full w-64 bg-white dark:bg-zinc-900 z-[999] shadow-lg transition-transform duration-300 ease-in-out ${
-                    isOpen ? 'translate-x-0' : 'translate-x-full'
-                }`}
-            >
-                <div className="p-4 flex justify-between items-center border-b border-zinc-300 dark:border-zinc-700">
-                    <span className="text-lg font-semibold">Menu</span>
-                    <button onClick={() => setIsOpen(false)} aria-label="Close menu">
                         <X size={24} />
                     </button>
                 </div>
-                <div className="flex flex-col p-6 gap-4 text-base">
+
+                <div className="flex flex-col p-6 space-y-1">
                     {navLinks.map(({ label, href }) => (
-                        <Link
+                        <a
                             key={href}
                             href={href}
                             onClick={() => setIsOpen(false)}
-                            className={`hover:text-sky-500 transition ${
-                                isActive(href) ? 'text-sky-600 font-semibold' : ''
-                            }`}
+                            className="flex items-center px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:text-purple-600 dark:hover:text-purple-400 rounded-xl transition-colors duration-200 font-medium"
                         >
                             {label}
-                        </Link>
+                        </a>
                     ))}
+
+                    <div className="border-t border-gray-200 dark:border-zinc-700 my-4"></div>
+
+                    <button
+                        onClick={toggleTheme}
+                        className="flex items-center justify-between px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-xl transition-colors duration-200"
+                    >
+                        <span>Theme</span>
+                        {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+                    </button>
+
                     {!user ? (
-                        <>
-                            <Link href="/login" onClick={() => setIsOpen(false)} className="text-sky-600 hover:underline">Login</Link>
-                            <Link href="/register" onClick={() => setIsOpen(false)} className="text-green-600 hover:underline">Register</Link>
-                        </>
+                        <div className="space-y-3 pt-4">
+                            <a href="/login" className="block text-center px-4 py-3 text-purple-600 border border-purple-600 rounded-xl hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors duration-200 font-medium">
+                                Login
+                            </a>
+                            <a href="/register" className="block text-center px-4 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 font-medium">
+                                Sign Up
+                            </a>
+                        </div>
                     ) : (
-                        <>
-                            <div className="border-t border-zinc-200 dark:border-zinc-700 pt-3 mt-2">
-                                <div className="text-sm text-zinc-500 dark:text-zinc-400 mb-2">Account</div>
-                                <Link 
-                                    href="/profile" 
-                                    onClick={() => setIsOpen(false)}
-                                    className="flex items-center gap-2 py-2 text-zinc-700 dark:text-zinc-200 hover:text-sky-500"
-                                >
-                                    <User size={16} />
-                                    Change user info
-                                </Link>
-                                <Link 
-                                    href="/orders" 
-                                    onClick={() => setIsOpen(false)}
-                                    className="flex items-center gap-2 py-2 text-zinc-700 dark:text-zinc-200 hover:text-sky-500"
-                                >
-                                    <ShoppingBag size={16} />
-                                    View orders
-                                </Link>
-                                <button 
-                                    onClick={() => { logout(); setIsOpen(false); }} 
-                                    className="flex items-center gap-2 py-2 text-red-500 hover:text-red-600 w-full text-left"
-                                >
-                                    <LogOut size={16} />
-                                    Logout
-                                </button>
+                        <div className="space-y-1 pt-4">
+                            <div className="px-4 py-3 bg-gray-50 dark:bg-zinc-800 rounded-xl">
+                                <p className="text-sm font-medium text-gray-900 dark:text-white">
+                                    {user.email?.split('@')[0]}
+                                </p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">
+                                    {user.email}
+                                </p>
                             </div>
-                        </>
+                            <a href="/profile" className="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-xl transition-colors duration-200">
+                                <User size={16} />
+                                <span>Profile Settings</span>
+                            </a>
+                            <a href="/orders" className="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-xl transition-colors duration-200">
+                                <ShoppingBag size={16} />
+                                <span>My Orders</span>
+                            </a>
+                            <button onClick={() => { logout(); setIsOpen(false); }} className="flex items-center space-x-3 px-4 py-3 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl w-full text-left transition-colors duration-200">
+                                <LogOut size={16} />
+                                <span>Sign Out</span>
+                            </button>
+                        </div>
                     )}
                 </div>
             </div>
 
-            {/* Overlay */}
+            {/* Mobile Overlay */}
             {isOpen && (
                 <div
-                    className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-opacity"
+                    className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden"
                     onClick={() => setIsOpen(false)}
                 />
             )}
-        </nav>
+
+            {/* Spacer for fixed navbar */}
+            <div className="h-20"></div>
+        </>
     );
 }
