@@ -5,7 +5,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("NEXT_DATABASE_URL")
 }
 
@@ -47,22 +47,22 @@ model Order {
 }
 
 model OrderItem {
-  id          String   @id @default(uuid())
-  orderId     String
-  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  itemId      String
-  name        String
-  price       Float
-  imageUrl    String?
-  quantity    Int      @default(1)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(uuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  itemId    String
+  name      String
+  price     Float
+  imageUrl  String?
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Image {
   id          String   @id @default(uuid())
   file_id     String
-  filePath    String?  // Path to the locally stored image
+  filePath    String? // Path to the locally stored image
   description String?
   price       Float
   visible     Boolean  @default(true)

@@ -86,6 +86,9 @@ Prisma.NullTypes = {
  * Enums
  */
 exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
+  ReadUncommitted: 'ReadUncommitted',
+  ReadCommitted: 'ReadCommitted',
+  RepeatableRead: 'RepeatableRead',
   Serializable: 'Serializable'
 });
 
@@ -179,6 +182,11 @@ exports.Prisma.SortOrder = {
   desc: 'desc'
 };
 
+exports.Prisma.QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+};
+
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
@@ -217,6 +225,10 @@ const config = {
         "fromEnvVar": null,
         "value": "darwin-arm64",
         "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "debian-openssl-3.0.x"
       }
     ],
     "previewFeatures": [],
@@ -233,17 +245,17 @@ const config = {
   "datasourceNames": [
     "db"
   ],
-  "activeProvider": "sqlite",
+  "activeProvider": "postgresql",
   "inlineDatasources": {
     "db": {
       "url": {
         "fromEnvVar": "NEXT_DATABASE_URL",
-        "value": "file:./dev.db"
+        "value": "postgresql://zahra_user:PsY32mume62jaVT1M8egOxJWJT46wPRs@dpg-d0pamemmcj7s73dua4e0-a.frankfurt-postgres.render.com/zahra"
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"sqlite\"\n  url      = env(\"NEXT_DATABASE_URL\")\n}\n\nmodel User {\n  id            String    @id @default(uuid())\n  email         String    @unique\n  name          String?\n  password      String?\n  emailVerified DateTime?\n  image         String?\n  isAdmin       Boolean   @default(false)\n  createdAt     DateTime  @default(now())\n  updatedAt     DateTime  @updatedAt\n  accounts      Account[]\n  sessions      Session[]\n  images        Image[]\n  orders        Order[]\n}\n\nmodel Product {\n  id          String   @id @default(uuid())\n  name        String\n  description String?\n  price       Float\n  imageUrl    String?\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n}\n\nmodel Order {\n  id        String      @id @default(uuid())\n  userId    String\n  user      User        @relation(fields: [userId], references: [id])\n  total     Float\n  status    String      @default(\"pending\")\n  items     OrderItem[]\n  createdAt DateTime    @default(now())\n  updatedAt DateTime    @updatedAt\n}\n\nmodel OrderItem {\n  id        String   @id @default(uuid())\n  orderId   String\n  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)\n  itemId    String\n  name      String\n  price     Float\n  imageUrl  String?\n  quantity  Int      @default(1)\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n}\n\nmodel Image {\n  id          String   @id @default(uuid())\n  file_id     String\n  filePath    String? // Path to the locally stored image\n  description String?\n  price       Float\n  visible     Boolean  @default(true)\n  priority    Int      @default(0)\n  imageType   String   @default(\"photo\") // New field: \"photo\" or \"painting\"\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n  userId      String\n  user        User     @relation(fields: [userId], references: [id])\n}\n\nmodel Account {\n  id                String  @id @default(uuid())\n  userId            String\n  type              String\n  provider          String\n  providerAccountId String\n  refresh_token     String?\n  access_token      String?\n  expires_at        Int?\n  token_type        String?\n  scope             String?\n  id_token          String?\n  session_state     String?\n  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([provider, providerAccountId])\n}\n\nmodel Session {\n  id           String   @id @default(uuid())\n  sessionToken String   @unique\n  userId       String\n  expires      DateTime\n  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n}\n\nmodel VerificationToken {\n  identifier String\n  token      String   @unique\n  expires    DateTime\n\n  @@unique([identifier, token])\n}\n",
-  "inlineSchemaHash": "eb72dbe110fb53e38b7f97fe03c39e1dd6c715cce65e4dce5602b175a6e3f9c9",
+  "inlineSchema": "generator client {\n  provider      = \"prisma-client-js\"\n  output        = \"../src/generated/prisma\"\n  binaryTargets = [\"native\", \"debian-openssl-3.0.x\"]\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"NEXT_DATABASE_URL\")\n}\n\nmodel User {\n  id            String    @id @default(uuid())\n  email         String    @unique\n  name          String?\n  password      String?\n  emailVerified DateTime?\n  image         String?\n  isAdmin       Boolean   @default(false)\n  createdAt     DateTime  @default(now())\n  updatedAt     DateTime  @updatedAt\n  accounts      Account[]\n  sessions      Session[]\n  images        Image[]\n  orders        Order[]\n}\n\nmodel Product {\n  id          String   @id @default(uuid())\n  name        String\n  description String?\n  price       Float\n  imageUrl    String?\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n}\n\nmodel Order {\n  id        String      @id @default(uuid())\n  userId    String\n  user      User        @relation(fields: [userId], references: [id])\n  total     Float\n  status    String      @default(\"pending\")\n  items     OrderItem[]\n  createdAt DateTime    @default(now())\n  updatedAt DateTime    @updatedAt\n}\n\nmodel OrderItem {\n  id        String   @id @default(uuid())\n  orderId   String\n  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)\n  itemId    String\n  name      String\n  price     Float\n  imageUrl  String?\n  quantity  Int      @default(1)\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n}\n\nmodel Image {\n  id          String   @id @default(uuid())\n  file_id     String\n  filePath    String? // Path to the locally stored image\n  description String?\n  price       Float\n  visible     Boolean  @default(true)\n  priority    Int      @default(0)\n  imageType   String   @default(\"photo\") // New field: \"photo\" or \"painting\"\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n  userId      String\n  user        User     @relation(fields: [userId], references: [id])\n}\n\nmodel Account {\n  id                String  @id @default(uuid())\n  userId            String\n  type              String\n  provider          String\n  providerAccountId String\n  refresh_token     String?\n  access_token      String?\n  expires_at        Int?\n  token_type        String?\n  scope             String?\n  id_token          String?\n  session_state     String?\n  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([provider, providerAccountId])\n}\n\nmodel Session {\n  id           String   @id @default(uuid())\n  sessionToken String   @unique\n  userId       String\n  expires      DateTime\n  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n}\n\nmodel VerificationToken {\n  identifier String\n  token      String   @unique\n  expires    DateTime\n\n  @@unique([identifier, token])\n}\n",
+  "inlineSchemaHash": "cecf12f8e89f040c818072aefe1c00a8f8a6c25e6bc3ba6d9e24cb68a17d50a5",
   "copyEngine": true
 }
 config.dirname = '/'
